@@ -27,12 +27,12 @@ impl Resolution {
     }
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Image {
-    original: Resolution,
-    large: Resolution,
-    medium: Resolution,
-    small: Resolution,
+    pub original: Resolution,
+    pub large: Resolution,
+    pub medium: Resolution,
+    pub small: Resolution,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]

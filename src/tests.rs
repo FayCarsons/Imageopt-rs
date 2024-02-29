@@ -1,8 +1,6 @@
-use clap::builder::OsStr;
-
 use crate::{
     process::is_image,
-    utils::{parse_scaling, Resolution, Scale},
+    utils::{parse_scaling, Image, Resolution, Scale},
 };
 
 #[test]
@@ -52,6 +50,37 @@ fn test_scale_res() {
         Resolution {
             width: 500,
             height: 500
+        }
+    );
+}
+
+#[test]
+fn test_res_to_image() {
+    let res = Resolution {
+        width: 1000,
+        height: 1000,
+    };
+
+    let scaling = [Scale::Small(10), Scale::Medium(40), Scale::Large(80)];
+
+    let image = res.to_image(&scaling);
+
+    assert_eq!(
+        image,
+        Image {
+            original: res,
+            small: Resolution {
+                width: 100,
+                height: 100
+            },
+            medium: Resolution {
+                width: 400,
+                height: 400
+            },
+            large: Resolution {
+                width: 800,
+                height: 800
+            }
         }
     );
 }
