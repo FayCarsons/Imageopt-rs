@@ -27,7 +27,7 @@ export type SizeMap = Record<string, ImageSizing>;";
 const TS_SIZEMAP_DECLARATION: &str = r"
 import type { SizeMap } from './image-types.ts'
        
-export const {output_title}: SizeMap = ";
+export const ";
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 struct Resolution {
@@ -86,6 +86,9 @@ struct Args {
 
     #[arg(short, long)]
     output: PathBuf,
+
+    #[arg(short = 'y', long = "yes")]
+    delete_dir: bool,
 
     #[arg(short, long)]
     js: PathBuf,
@@ -227,6 +230,7 @@ fn main() -> std::io::Result<()> {
     let Args {
         input,
         output,
+        delete_dir,
         js,
         scale,
     } = Args::parse();
@@ -240,16 +244,21 @@ fn main() -> std::io::Result<()> {
     );
 
     if output.exists() {
-        let mut buffer = String::new();
-        println!("Delete directory {:?}? [y/n]", output.clone());
-        std::io::stdin()
-            .read_line(&mut buffer)
-            .expect("User input failed\n");
-
-        if buffer.trim() == "y" {
-            println!("Removing directory . . .");
+        if delete_dir {
             fs::remove_dir_all(output)?;
             fs::create_dir(output)?;
+        } else {
+            let mut buffer = String::new();
+            println!("Delete directory {:?}? [y/n]", output.clone());
+            std::io::stdin()
+                .read_line(&mut buffer)
+                .expect("User input failed\n");
+
+            if buffer.trim() == "y" {
+                println!("Removing directory . . .");
+                fs::remove_dir_all(output)?;
+                fs::create_dir(output)?;
+            }
         }
     } else {
         fs::create_dir(output)?;
@@ -270,7 +279,10 @@ fn main() -> std::io::Result<()> {
         fs::write(js.join("image-types.ts"), TS_TYPE)?;
     }
 
-    let object = format!("{TS_SIZEMAP_DECLARATION}{};", to_string_pretty(&size_map)?);
+    let object = format!(
+        "{TS_SIZEMAP_DECLARATION} {output_title}: SizeMap = {};",
+        to_string_pretty(&size_map)?
+    );
     let output_title = &format!("{output_title}.ts");
     fs::write(js.join(output_title), object)
 }
