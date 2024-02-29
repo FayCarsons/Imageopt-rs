@@ -2,7 +2,7 @@ use clap::builder::OsStr;
 
 use crate::{
     process::is_image,
-    utils::{parse_scaling, Scale},
+    utils::{parse_scaling, Resolution, Scale},
 };
 
 #[test]
@@ -36,4 +36,22 @@ fn test_image_extension() {
     ];
     let mut res = images.into_iter().map(is_image);
     assert!(res.all(|b| b))
+}
+
+#[test]
+fn test_scale_res() {
+    let res = Resolution {
+        width: 1000,
+        height: 1000,
+    };
+
+    let scaled = res.scale(50);
+
+    assert_eq!(
+        scaled,
+        Resolution {
+            width: 500,
+            height: 500
+        }
+    );
 }
