@@ -115,7 +115,10 @@ fn parse_scaling(s: &str) -> Result<Scaling, String> {
 }
 
 fn is_image(s: &OsStr) -> bool {
-    matches!(s.as_bytes(), b"png" | b"jpg" | b"jpeg" | b"tiff" | b"raw")
+    matches!(
+        &s.as_bytes().to_ascii_lowercase()[..],
+        b"png" | b"jpg" | b"jpeg" | b"tiff" | b"raw"
+    )
 }
 
 fn convert_image(
@@ -175,12 +178,15 @@ fn convert_image(
                 Scale::Small(n) => ("_small", n),
             };
 
-            let output_filename = path.file_stem().and_then(|s| s.to_str()).unwrap();
-            let output_filename = format!("{output_filename}{tag}.avif");
+            let output_filename = path
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .map(|s| s.to_string() + tag + ".avif")
+                .unwrap();
             let output_path = output.join(output_filename.clone());
             let output_path = output_path
                 .to_str()
-                .expect("Cannot convert `output_path` to str");
+                .unwrap_or_else(|| panic!("Cannot convert dirname {output:?} to string"));
 
             std::process::Command::new("magick")
                 .args([
