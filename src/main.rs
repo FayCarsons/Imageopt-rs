@@ -156,7 +156,11 @@ fn convert_image(
             .map(|s| s.to_string() + ".avif")
             .unwrap();
         let convert_avif = std::process::Command::new("magick")
-            .args(["convert", path_str, &output_path])
+            .args([
+                "convert",
+                path_str,
+                &output.join(output_path).to_string_lossy(),
+            ])
             .output()?;
 
         assert!(convert_avif.status.success());
