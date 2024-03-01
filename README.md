@@ -11,10 +11,6 @@ Options are as follows:
 Must be three comma or whitespace separated integers in ascending order. <br>
 `-y / --yes`: automatically deletes output directory and contents if already exists. <br>
 
-Can be run with `cargo`, <br> 
-for example: `cargo run --release -- -i test -o test-out -j js-test -s 15 30 60 --yes`
-Alternatively, build with `cargo build --release` and embed the executable in `target/release` into your project.
-
 # TS Output
 The typescript files written to your output dir will contain a Record of all converted filenames mapped to 
 original and resized resolutions as well as `image-types.ts` which contains declarations for that type and <br>
