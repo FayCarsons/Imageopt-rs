@@ -25,6 +25,11 @@ impl Resolution {
             small: self.scale(small.inner()),
         }
     }
+
+    pub fn serialize_elm(&self) -> String {
+        let Resolution { width, height } = self;
+        format!("{{ width = {width}, height = {height} }}")
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -33,6 +38,23 @@ pub struct Image {
     pub large: Resolution,
     pub medium: Resolution,
     pub small: Resolution,
+}
+
+impl Image {
+    pub fn serialize_elm(&self) -> String {
+        let Image {
+            original,
+            large,
+            medium,
+            small,
+        } = self;
+        let original = original.serialize_elm();
+        let large = large.serialize_elm();
+        let medium = medium.serialize_elm();
+        let small = small.serialize_elm();
+
+        format!("{{ original = {original}, large = {large}, medium = {medium}, small = {small} }}")
+    }
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
